@@ -57,17 +57,25 @@
               <div> - OR - </div>
 
               <div>
-                <a href="{{ route('admin_auth_social', 'google') }}" class="btn btn-danger btn-block btn-social"><i class="fa fa-google"></i> &nbsp;&nbsp;&nbsp;Login with Google</a>
-                <a href="#" class="btn btn-primary btn-block btn-social"><i class="fa fa-facebook"></i> &nbsp;&nbsp;&nbsp;Login with Facebook</a>
-                <a href="#" class="btn btn-info btn-block btn-social"><i class="fa fa-twitter"></i> &nbsp;&nbsp;&nbsp;Login with Twitter</a>
-                <a href="#" class="btn btn-dark btn-block btn-social"><i class="fa fa-linkedin"></i> &nbsp;&nbsp;&nbsp;Login with LinkedIn</a>
+                @if(env('GOOGLE_AUTH', false))
+					<a href="{{ route('admin_auth_provider', 'google') }}" class="btn btn-danger btn-block btn-social"><i class="fa fa-google"></i> &nbsp;&nbsp;&nbsp;Login with Google</a>
+				@endif
+                @if(env('FACEBOOK_AUTH', false))
+					<a href="#" class="btn btn-primary btn-block btn-social"><i class="fa fa-facebook"></i> &nbsp;&nbsp;&nbsp;Login with Facebook</a>
+				@endif
+                @if(env('TWITTER_AUTH', false))
+					<a href="#" class="btn btn-info btn-block btn-social"><i class="fa fa-twitter"></i> &nbsp;&nbsp;&nbsp;Login with Twitter</a>
+				@endif
+                @if(env('LINKEDIN_AUTH', false))
+					<a href="#" class="btn btn-dark btn-block btn-social"><i class="fa fa-linkedin"></i> &nbsp;&nbsp;&nbsp;Login with LinkedIn</a>
+				@endif
               </div>
               
               <div class="clearfix"></div>
 
               <div class="separator">
                 <p class="change_link">Don't have an account?
-                  <a href="#signup" class="to_register" style="font-weight: bold"> {{ ucfirst(lang('sign up', $translation)) }} </a>
+                  <a href="#signup" class="to_register" id="btn_signup" style="font-weight: bold"> {{ ucfirst(lang('sign up', $translation)) }} </a>
                 </p>
 
                 <div class="clearfix"></div>
@@ -88,11 +96,26 @@
         </div>
 
         <div id="register" class="animate form registration_form">
+		
+		  @include('_template_adm.message')
+		  
+		  @if(isset($message))
+			<div class="clearfix"></div>
+			<div class="alert alert-info alert-dismissible fade in" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+				<h4><i class="icon fa fa-info-circle"></i> {{ ucwords(lang('info', $translation)) }}</h4>
+				{{ $message }}
+			</div>
+		  @endif
+		
           <section class="login_content">
             <form action="{{ route('admin_do_register') }}" method="POST">
               {{ csrf_field() }}
               <h1>{{ ucwords(lang('create account', $translation)) }}</h1>
               <div>
+                <input type="text" name="account_name" value="{{ old('account_name') }}" class="form-control" placeholder="{{ ucwords(lang('name', $translation)) }}" required="" />
+              </div>
+			  <div>
                 <input type="email" name="account_email" value="{{ old('account_email') }}" class="form-control" placeholder="{{ ucwords(lang('email', $translation)) }}" required="" />
               </div>
               <div>
@@ -108,10 +131,18 @@
               <div> - OR - </div>
 
               <div>
-                <a href="#" class="btn btn-danger btn-block btn-social"><i class="fa fa-google"></i> &nbsp;&nbsp;&nbsp;Sign Up with Google</a>
-                <a href="#" class="btn btn-primary btn-block btn-social"><i class="fa fa-facebook"></i> &nbsp;&nbsp;&nbsp;Sign Up with Facebook</a>
-                <a href="#" class="btn btn-info btn-block btn-social"><i class="fa fa-twitter"></i> &nbsp;&nbsp;&nbsp;Sign Up with Twitter</a>
-                <a href="#" class="btn btn-dark btn-block btn-social"><i class="fa fa-linkedin"></i> &nbsp;&nbsp;&nbsp;Sign Up with LinkedIn</a>
+				@if(env('GOOGLE_AUTH', false))
+					<a href="{{ route('admin_auth_provider', 'google') }}" class="btn btn-danger btn-block btn-social"><i class="fa fa-google"></i> &nbsp;&nbsp;&nbsp;Sign Up with Google</a>
+				@endif
+                @if(env('FACEBOOK_AUTH', false))
+					<a href="#" class="btn btn-primary btn-block btn-social"><i class="fa fa-facebook"></i> &nbsp;&nbsp;&nbsp;Sign Up with Facebook</a>
+				@endif
+                @if(env('TWITTER_AUTH', false))
+					<a href="#" class="btn btn-info btn-block btn-social"><i class="fa fa-twitter"></i> &nbsp;&nbsp;&nbsp;Sign Up with Twitter</a>
+				@endif
+                @if(env('LINKEDIN_AUTH', false))
+					<a href="#" class="btn btn-dark btn-block btn-social"><i class="fa fa-linkedin"></i> &nbsp;&nbsp;&nbsp;Sign Up with LinkedIn</a>
+				@endif
               </div>
 
               <div class="clearfix"></div>
@@ -139,5 +170,11 @@
         </div>
       </div>
     </div>
+	
+	@if(isset($data))
+		<script>
+		document.getElementById("btn_signup").click();
+		</script>
+	@endif
   </body>
 </html>

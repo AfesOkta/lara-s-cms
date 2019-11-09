@@ -34,8 +34,8 @@ Route::group(['prefix' => env('ADMIN_DIR')], function() {
 
     Route::post('/do_register', 'Admin\AuthController@do_login')->name('admin_do_register');
 
-    Route::get('/auth/{social}','Admin\AuthController@redirectToProvider')->where('social', 'google|facebook')->name('admin_auth_social');
-    Route::get('/auth/{social}/callback','Admin\AuthController@handleProviderCallback')->where('social', 'google|facebook')->name('admin_auth_social_callback');
+    Route::get('/auth/{social}','Admin\AuthController@redirectToProvider')->where('social', 'google|facebook')->name('admin_auth_provider');
+    Route::get('/auth/{social}/callback','Admin\AuthController@handleProviderCallback')->where('social', 'google|facebook')->name('admin_auth_provider_callback');
 
     Route::group(['middleware' => 'check.admin'], function () {
         Route::get('/', 'Admin\HomeController@index')->name('admin_home');

@@ -150,9 +150,105 @@ class AuthController extends Controller
     
 	public function handleProviderCallback($social)
 	{
-        $user = Socialite::driver($social)->user();
+		$user = Socialite::driver($social)->user();
+		
+		if ($user)
+		{
+			$admin = User::leftJoin('user_group', 'users.id', 'user_group.user')
+				->leftJoin('usergroups', 'usergroups.id', 'user_group.group')
+				->where([
+					'email' => $user->email
+				])
+				->select('users.id', 'users.name', 'users.username', 'users.isDeleted', 'users.status', 'usergroups.id as group_id', 'usergroups.name as group_name')
+				->first();
+				
+			if ($admin)
+			{
+				// REGISTERED
+				if ($admin->isDeleted != 0) {
+					return redirect()->route('admin_login')->with('error', 'Login failed! Because your account has been deleted!');
+				}
+				
+				if($admin->status != 1){
+					return redirect()->route('admin_login')->with('error', 'Login failed! Because your account has been disabled!');
+				}
+				
+				// success login
+				// logging
+				$log = new LogsSystem();
+				$log->subject = $admin->id;
+				$log->action = 1;
+				$log->save();
+
+				// get user's access
+				$access = [];
+				$get_access = AppAccess::leftJoin('app_rule', 'app_rule.id', 'app_access.rule_id')
+					->leftJoin('app_module', 'app_rule.module_id', 'app_module.id')
+					->where('usergroup_id', $admin->group_id)
+					->where('app_module.status', 1)
+					->select('app_access.rule_id', 'app_rule.name as rule_name', 'app_rule.description as rule_desc', 'app_module.name as module_name')
+					->get();
+				if(count($get_access) > 0){
+					foreach ($get_access as $item) {
+						$obj = new \stdClass();
+						$obj->rule_id = $item->rule_id;
+						$obj->rule_name = $item->rule_name;
+						$obj->rule_desc = $item->rule_desc;
+						$obj->module_name = $item->module_name;
+						$access[] = $obj;
+					}
+				}
+
+				// get user's access branch
+				$branch_allowed = [];
+				$division_allowed = [];
+				$get_branch_allowed = Group_Branch::leftJoin('branch', 'branch.id', 'group_branch.branch')
+					->leftJoin('divisions', 'divisions.id', 'branch.division_id')
+					->where('branch.isDeleted', 0)
+					->where('group_branch.group', $admin->group_id)
+					->select('branch.*', 'divisions.name as division_name', 'divisions.id as division_id')
+					->orderBy('divisions.name')
+					->orderBy('branch.name')
+					->get();
+			
+				if(count($get_branch_allowed) > 0)
+				{
+					foreach ($get_branch_allowed as $item) {
+						$obj = new \stdClass();
+						$obj->branch_id = $item->id;
+						$obj->branch = $item->name;
+						$obj->division_id = $item->division_id;
+						$obj->division = $item->division_name;
+						$branch_allowed[] = $obj;
+
+						if (!in_array($item->division_name, $division_allowed))
+						{
+							$division_allowed[] = $item->division_name;
+						}
+					}
+				}
+
+				return redirect()
+					->route('admin_home')
+					->with(Session::put('admin', $admin))
+					->with(Session::put('access', $access))
+					->with(Session::put('branch', $branch_allowed))
+					->with(Session::put('division', $division_allowed));
+			}
+			else
+			{
+				// NEW USER
+				$data = new \stdClass();
+				$data->name = $user->name;
+				$data->email = $user->email;
+				// $data->$social_id = $user->id;
+				$message = 'Your email is not registered yet, please sign up first';
+				
+				return view('admin.login', compact('data', 'message'));
+			}
+		}
         
-        return redirect()->route('admin_home');
+        return redirect()->route('admin_home')->with('error', 'Authentication with '.ucwords($social).' failed, please try again.');
 	}
 	
 }
