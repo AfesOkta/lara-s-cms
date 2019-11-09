@@ -5,14 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
+use Socialite;
+
+// library
+use App\Libraries\Helper;
 
 use App\Models\User;
 use App\Models\LogsSystem;
 use App\Models\AppAccess;
 use App\Models\Group_Branch;
-
-// library
-use App\Libraries\Helper;
 
 class AuthController extends Controller
 {
@@ -141,4 +142,17 @@ class AuthController extends Controller
         Session::forget('admin');
         return redirect()->route('admin_login')->with('success', 'Logout successfully');
     }
+
+    public function redirectToProvider($social)
+	{
+		return Socialite::driver($social)->redirect();
+	}   
+    
+	public function handleProviderCallback($social)
+	{
+        $user = Socialite::driver($social)->user();
+        
+        return redirect()->route('admin_home');
+	}
+	
 }
