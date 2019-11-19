@@ -191,4 +191,29 @@ The default template for maintenance mode responses is located in `resources/vie
 
 ## Documentation
 
+Coming soon
 
+## Contributing
+
+Thank you for considering contributing to the Lara-S-CMS.
+
+## Bugs, Improvements & Security Vulnerabilities
+
+If you discover a bug or security vulnerability within Lara-S-CMS, please send an email to Vicky Budiman at [vicky@kiniditech.com](mailto:vicky@kiniditech.com). All requests will be addressed promptly.
+
+## Issues
+
+If you come across any issue/bug please [report them here](https://github.com/vickzkater/lara-s-cms/issues).
+
+## License
+
+Lara-S-CMS is open-sourced software built by KINIDI Tech and contributors and licensed under the [MIT license](http://opensource.org/licenses/MIT).
+
+## Credits
+
+- Laravel (https://github.com/laravel/laravel)
+- ColorlibHQ (https://github.com/ColorlibHQ/gentelella)
+
+<p align="center">Brought to you by</p>
+<p align="center"><img src="https://kiniditech.com/hosting/kiniditech_logo.jpg" width="200" alt="KINDI Tech"></p>
+<p align="center">KINIDI Tech</p>
