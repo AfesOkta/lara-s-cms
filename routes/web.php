@@ -11,21 +11,7 @@
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::get('/', 'Admin\AuthController@login');
-
-// Route::get('/', 'Web\HomeController@index')->name('home');
-
-// Route::get('/login', 'Web\AuthController@login')->name('login');
-// Route::post('/do_login', 'Web\AuthController@do_login')->name('do_login');
-// Route::get('/logout', 'Web\AuthController@logout')->name('logout');
-
-// PRODUCTS
-// Route::get('/products', 'Web\ProductController@list')->name('product_list');
-// Route::get('/product/{id}', 'Web\ProductController@detail')->name('product_detail');
 
 Route::group(['prefix' => env('ADMIN_DIR')], function() {
     Route::get('/login', 'Admin\AuthController@login')->name('admin_login');
@@ -182,5 +168,7 @@ Route::group(['prefix' => env('ADMIN_DIR')], function() {
             Route::post('/do_edit/{id}', 'Admin\LangMasterController@do_edit')->name('admin_langmaster_do_edit');
         });
     });
+
+    /** INPUT NEW ROUTES BELOW */
     
 });
