@@ -1,3 +1,8 @@
+## Version 2.0.4
+### Changelog
+- Add function generate thumbnail image
+- Fix issue in Article List
+
 ## Version 2.0.3
 ### Changelog
 - Update validation redirection URL after login in Admin (if AJAX DataTables, set URL to Admin Home page as default)

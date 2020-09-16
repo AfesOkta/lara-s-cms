@@ -361,6 +361,9 @@ if (!function_exists('set_input_form2')) {
             if (isset($config->info)) {
                 $info = $config->info;
             }
+            if (isset($config->info_text)) {
+                $info_text = $config->info_text;
+            }
         }
 
         // set error class
@@ -560,7 +563,7 @@ if (!function_exists('set_input_form2')) {
                 }
                 $input_element .= '<input type="file" ' . $properties . ' class="form-control col-md-7 col-xs-12" accept="image/*" onchange="readURL(this, \'before\');" style="margin-top:5px" />';
                 if (isset($info)) {
-                    $input_element .= '<br><span><i class="fa fa-info-circle"></i>&nbsp; ' . $info . '</span>';
+                    $input_element .= '<br><span>' . $info . '</span>';
                 }
                 if (!empty($value) && $delete) {
                     $input_element .= '<br><span class="btn btn-warning btn-xs" id="' . $id_name . '-delbtn" style="margin: 5px 0 !important;" onclick="reset_img_preview(\'#' . $id_name . '\', \'' . $no_image . '\', \'before\')">Delete uploaded image?</span>';
@@ -594,7 +597,7 @@ if (!function_exists('set_input_form2')) {
                     }
                 }
                 if (isset($info)) {
-                    $input_element .= '<span><i class="fa fa-info-circle"></i>&nbsp; ' . $info . '</span><br>';
+                    $input_element .= '<span>' . $info . '</span><br>';
                 }
                 $input_element .= '<input type="file" ' . $properties . ' class="form-control col-md-7 col-xs-12" />';
                 break;
@@ -613,6 +616,11 @@ if (!function_exists('set_input_form2')) {
             $element .= '</div>';
         } else {
             $element .= $input_element;
+        }
+
+        // add info text
+        if (isset($info_text)) {
+            $element .= '<span>' . $info_text . '</span>';
         }
 
         // set error message

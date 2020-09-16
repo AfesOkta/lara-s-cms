@@ -62,14 +62,18 @@
                                 $config->placeholder = lang('Must be unique. If left empty, system will auto-generate this.', $translation);
                                 echo set_input_form2('text', 'slug', ucwords(lang('slug', $translation)), $data, $errors, false, $config);
 
+                                $config = new \stdClass();
+                                $config->info = '<i class="fa fa-info-circle"></i>&nbsp; '.lang('The image will be resized to 750x300 px as a thumbnail image', $translation);
                                 if(isset($data)){
                                     // EDIT - not required
-                                    echo set_input_form2('image', 'thumbnail', ucwords(lang('thumbnail', $translation)), $data, $errors, false);
+                                    echo set_input_form2('image', 'thumbnail', ucwords(lang('thumbnail', $translation)), $data, $errors, false, $config);
                                 }else{
-                                    echo set_input_form2('image', 'thumbnail', ucwords(lang('thumbnail', $translation)), $data, $errors, true);
+                                    echo set_input_form2('image', 'thumbnail', ucwords(lang('thumbnail', $translation)), $data, $errors, true, $config);
                                 }
                                 
-                                echo set_input_form2('tags', 'keywords', ucwords(lang('keywords', $translation)).' <i class="fa fa-info-circle" data-toggle="tooltip" title="'.lang('separate with commas', $translation).'"></i>', $data, $errors, false);
+                                $config = new \stdClass();
+                                $config->info_text = '<i class="fa fa-info-circle"></i>&nbsp; '.lang('separate with commas', $translation);
+                                echo set_input_form2('tags', 'keywords', ucwords(lang('keywords', $translation)), $data, $errors, false, $config);
 
                                 echo set_input_form2('textarea', 'summary', ucwords(lang('summary', $translation)), $data, $errors, true);
                             @endphp

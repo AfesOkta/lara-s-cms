@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\Datatables\Datatables;
+use Intervention\Image\Facades\Image;
 
 // LIBRARIES
 use App\Libraries\Helper;
@@ -60,21 +61,12 @@ class ArticleController extends Controller
             'articles.created_at',
             'articles.updated_at',
             'articles.deleted_at',
-            DB::raw('GROUP_CONCAT(topics.name SEPARATOR " | ") AS topic')
+            DB::raw('GROUP_CONCAT(topics.name SEPARATOR " | ") AS topics')
         )
             ->leftJoin('article_topic', 'articles.id', 'article_topic.article_id')
             ->leftJoin('topics', 'article_topic.topic_id', 'topics.id')
             ->groupBy(
-                'articles.id',
-                'articles.title',
-                'articles.slug',
-                'articles.thumbnail',
-                'articles.keywords',
-                'articles.content',
-                'articles.status',
-                'articles.created_at',
-                'articles.updated_at',
-                'articles.deleted_at'
+                'articles.id'
             );
 
         return $datatables->eloquent($query)
@@ -95,6 +87,9 @@ class ArticleController extends Controller
             ->addColumn('image_item', function ($data) {
                 return '<img src="' . asset($data->thumbnail) . '" style="max-width: 200px;max-height: 200px;display: block;margin-left: auto;margin-right: auto;">';
             })
+            ->addColumn('topic', function ($data) {
+                return $data->topics;
+            })
             ->editColumn('created_at', function ($data) {
                 return $data->created_at;
             })
@@ -104,7 +99,7 @@ class ArticleController extends Controller
             ->editColumn('updated_at', function ($data) {
                 return Helper::time_ago(strtotime($data->updated_at), lang('ago', $this->translation), Helper::get_periods($this->translation));
             })
-            ->rawColumns(['item_status', 'action', 'image_item'])
+            ->rawColumns(['item_status', 'action', 'image_item', 'topic'])
             ->toJson();
     }
 
@@ -199,7 +194,24 @@ class ArticleController extends Controller
                 ->with('error', lang($image['message'], $this->translation));
         }
         // GET THE UPLOADED IMAGE RESULT
-        $data->thumbnail = $dir_path . $image['data'];
+        $uploaded_image = $dir_path . $image['data'];
+
+        // GENERATE IMAGE THUMBNAIL - http://image.intervention.io/api/make
+        $data->thumbnail = $dir_path . $format_image_name . '-750x300.jpg';
+        try {
+            // create a new image from gd resource
+            $image_source = imagecreatefromjpeg(public_path($uploaded_image));
+            // open file a image resource
+            $img_thumb = Image::make($image_source);
+            // crop the best fitting x:y ratio and resize to axb pixel
+            $img_thumb->fit(750, 300);
+            // save file as jpg with x% quality
+            $img_thumb->save($data->thumbnail, 80);
+            // Thumbnail Image generated successfully
+        } catch (\Intervention\Image\Exception\NotReadableException $e) {
+            // throwing  error when exception occurs
+            dd($e);
+        }
 
         // PROCESSING CONTENT ELEMENT
         $types = $request->v_element_type;
@@ -461,7 +473,24 @@ class ArticleController extends Controller
                     ->with('error', lang($image['message'], $this->translation));
             }
             // GET THE UPLOADED IMAGE RESULT
-            $data->thumbnail = $dir_path . $image['data'];
+            $uploaded_image = $dir_path . $image['data'];
+
+            // GENERATE IMAGE THUMBNAIL - http://image.intervention.io/api/make
+            $data->thumbnail = $dir_path . $format_image_name . '-750x300.jpg';
+            try {
+                // create a new image from gd resource
+                $image_source = imagecreatefromjpeg(public_path($uploaded_image));
+                // open file a image resource
+                $img_thumb = Image::make($image_source);
+                // crop the best fitting x:y ratio and resize to axb pixel
+                $img_thumb->fit(750, 300);
+                // save file as jpg with x% quality
+                $img_thumb->save($data->thumbnail, 80);
+                // Thumbnail Image generated successfully
+            } catch (\Intervention\Image\Exception\NotReadableException $e) {
+                // throwing  error when exception occurs
+                dd($e);
+            }
         }
 
         // PROCESSING CONTENT ELEMENT
